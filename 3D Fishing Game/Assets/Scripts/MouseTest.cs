@@ -4,20 +4,14 @@ using UnityEngine;
 
 public class MouseTest : MonoBehaviour
 {
+    // Public variables
     public Vector3 screenPos;
     public Vector3 worldPos;
     public LayerMask layerMask;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
+    // This is called MouseTest.cs but it's really just a script for the rod positioning.
     void Update()
     {
-        //Debug.Log("new pos");
         screenPos = Input.mousePosition;
         screenPos.z = Camera.main.nearClipPlane + 1;
 

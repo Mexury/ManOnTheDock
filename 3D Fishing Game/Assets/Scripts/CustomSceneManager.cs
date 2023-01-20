@@ -6,6 +6,11 @@ using UnityEngine.SceneManagement;
 
 public class CustomSceneManager : MonoBehaviour
 {
+    /*
+     * This is the CustomSceneManager script for managing scenes such as Victory, Loss, Main and SampleScene.
+     * (I was too lazy to change the name of the SampleScene, it has no effect on the gameplay whatsoever.)
+     */
+    // Public variables to get in the editor.
     public TextMeshProUGUI score;
     public TextMeshProUGUI highscore;
     public TextMeshProUGUI caught;
@@ -13,21 +18,26 @@ public class CustomSceneManager : MonoBehaviour
 
     void Start()
     {
-        Debug.Log($"S:{StatsManager.Score}, HS:{StatsManager.Highscore}");
+        // When a scene loads, it checks if the current score is higher than the highscore.
+        // If this is true, the highscore will then be set to whatever the current score is.
+        // Thus giving you a new highscore.
+        // It also disables the NEW HIGHSCORE message if you do not get a new highscore.
         if (StatsManager.Score > StatsManager.Highscore)
         {
             StatsManager.Highscore = StatsManager.Score;
-            Debug.Log($"NEW: S:{StatsManager.Score}, HS:{StatsManager.Highscore}");
         } else
         {
             highscore.enabled = false;
         }
 
+        // Set the text in the UI to the corresponding variables.
         score.text = $"SCORE: {StatsManager.Score.ToString()}";
         caught.text = StatsManager.Caught.ToString();
         died.text = StatsManager.Died.ToString();
     }
 
+    // Static methods to change the scene using UI buttons.
+    // It has to be static, or it won't be found in the editor.
     public static void GoToMainScreen()
     {
         // Change the scene to Main scene
@@ -48,6 +58,9 @@ public class CustomSceneManager : MonoBehaviour
         // Change the scene to Loss scene
         SceneManager.LoadScene("Loss");
     }
+
+    // A static method to exit the game using UI buttons.
+    // It has to be static, or it won't be found in the editor.
     public static void ExitGame()
     {
         // Exit the game

@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Handles victory and loss states based on how many fish caught or dead
         if (StatsManager.Caught >= 50)
         {
             // Victory
@@ -34,9 +35,11 @@ public class GameManager : MonoBehaviour
             CustomSceneManager.GoToLoseScreen();
         }
 
+        // Set the score text in the game
         float newScore = StatsManager.Died == 0 ? StatsManager.Score : (StatsManager.Score * (StatsManager.Caught / StatsManager.Died));
         text.text = $"Fish: {StatsManager.Alive}\nCaught: {StatsManager.Caught}\n Dead: {StatsManager.Died}\nScore: {Mathf.CeilToInt(newScore) * 6}";
 
+        // Check if you left click on a fish to catch it
         if (Input.GetMouseButtonDown(0))
         {
             RaycastHit raycastHit;
@@ -45,19 +48,22 @@ public class GameManager : MonoBehaviour
             {
                 if (raycastHit.transform != null)
                 {
-                    //Our custom method.
                     if (raycastHit.transform.gameObject.CompareTag("Fish"))
                     {
+                        // Update the statsmanager
                         Fish fish = raycastHit.transform.gameObject.GetComponent<Fish>();
                         StatsManager.Score += fish.price;
                         StatsManager.Alive--;
                         StatsManager.Caught += 1;
 
+                        // Destroy fish
                         Destroy(raycastHit.transform.gameObject);
                     }
                 }
             }
         }
+
+        // DEBUG: Check if you right click on a fish to kill it (like the shark)
         if (Input.GetMouseButtonDown(2))
         {
             RaycastHit raycastHit;
@@ -66,13 +72,14 @@ public class GameManager : MonoBehaviour
             {
                 if (raycastHit.transform != null)
                 {
-                    //Our custom method.
                     if (raycastHit.transform.gameObject.CompareTag("Fish"))
                     {
+                        // Update the statsmanager
                         Fish fish = raycastHit.transform.gameObject.GetComponent<Fish>();
                         StatsManager.Alive--;
                         StatsManager.Died += 1;
 
+                        // Destroy fish
                         Destroy(raycastHit.transform.gameObject);
                     }
                 }
@@ -81,15 +88,19 @@ public class GameManager : MonoBehaviour
 
         if (!isSpawningFish)
         {
+            // Spawns fish if not already
             StartCoroutine(SpawnFish());
         }
     }
 
     private IEnumerator SpawnFish()
     {
+        // Spawn a random fish with random delay between spawning
+        
         float delay = Random.Range(0.2f, 2f);
         isSpawningFish = true;
 
+        // Randomize fish being large and or heavy for worth increase.
         bool isLarge = Random.Range(0, 101) <= 8;
         bool isHeavy = Random.Range(0, 101) == 22;
         
@@ -109,11 +120,15 @@ public class GameManager : MonoBehaviour
             StatsManager.Alive++;
             //spawn code
 
+            // Create a new fish and set the price which was calculated above.
             GameObject fish = Instantiate(prefab, new Vector3(0, 0, -6f), Quaternion.identity);
             Fish _fish = fish.GetComponent<Fish>();
             _fish.price = Mathf.CeilToInt(worth);
 
+            // Spawn at a random position
             fish.transform.position = new Vector3(0 + Random.Range(-1.5f, 1.51f), 0, -6f + Random.Range(-1.5f, 1.51f));
+
+            // Randomly decide which sprite it picks based on random values and also values picked above.
             fish.GetComponent<SpriteRenderer>().sprite = isLarge ? large[Random.Range(0, large.Length)] : small[Random.Range(0, small.Length)];
 
         }
